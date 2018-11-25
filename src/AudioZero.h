@@ -11,14 +11,14 @@
  * or the GNU Lesser General Public License version 2.1, both as
  * published by the Free Software Foundation.
  */
-	
+
 #ifndef AUDIOZERO_H
 #define AUDIOZERO_H
 
 #include "Arduino.h"
 #include "Print.h"
 
-#include <SD.h>
+#include <SerialFlash.h>
 #include <SPI.h>
 
 

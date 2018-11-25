@@ -13,7 +13,7 @@
  */
 
 #include "AudioZero.h"
-#include <SD.h>
+#include <SerialFlash.h>
 #include <SPI.h>
 
 
@@ -27,14 +27,14 @@ uint8_t *__WavSamples;
 int __Volume;
 
 void AudioZeroClass::begin(uint32_t sampleRate) {
-	
+
 	__StartFlag = false;
 	__SampleIndex = 0;					//in order to start from the beginning
 	__NumberOfSamples = 1024;	//samples to read to have a buffer
-	
+
 	/*Allocate the buffer where the samples are stored*/
 	__WavSamples = (uint8_t *) malloc(__NumberOfSamples * sizeof(uint8_t));
-	
+
 	/*Modules configuration */
   	dacConfigure();
 	tcConfigure(sampleRate);
@@ -43,7 +43,7 @@ void AudioZeroClass::begin(uint32_t sampleRate) {
 void AudioZeroClass::end() {
 	tcDisable();
 	tcReset();
-	analogWrite(A0, 0);	
+	analogWrite(A0, 0);
 }
 
 /*void AudioZeroClass::prepare(int volume){
@@ -56,7 +56,7 @@ while (myFile.available()) {
     {
       myFile.read(__WavSamples, __NumberOfSamples);
       __HeadIndex = 0;
-	  
+
 	  /*once the buffer is filled for the first time the counter can be started*/
       tcStartCounter();
       __StartFlag = true;
@@ -64,10 +64,10 @@ while (myFile.available()) {
     else
     {
       uint32_t current__SampleIndex = __SampleIndex;
-      
+
       if (current__SampleIndex > __HeadIndex) {
         myFile.read(&__WavSamples[__HeadIndex], current__SampleIndex - __HeadIndex);
-        __HeadIndex = current__SampleIndex;        
+        __HeadIndex = current__SampleIndex;
       }
       else if (current__SampleIndex < __HeadIndex) {
         myFile.read(&__WavSamples[__HeadIndex], __NumberOfSamples-1 - __HeadIndex);
@@ -115,7 +115,7 @@ void AudioZeroClass::dacConfigure(void){
 
 	TC5->COUNT16.CC[0].reg = (uint16_t) (SystemCoreClock / sampleRate - 1);
 	while (tcIsSyncing());
-	
+
 	// Configure interrupt request
 	NVIC_DisableIRQ(TC5_IRQn);
 	NVIC_ClearPendingIRQ(TC5_IRQn);
@@ -125,7 +125,7 @@ void AudioZeroClass::dacConfigure(void){
 	// Enable the TC5 interrupt request
 	TC5->COUNT16.INTENSET.bit.MC0 = 1;
 	while (tcIsSyncing());
-}	
+}
 
 
 bool AudioZeroClass::tcIsSyncing()
